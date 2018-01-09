@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="./style.css">
+    <script src="./vue.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    <div id="app">
+        <h2>自定义的下拉框</h2>
+        <custom-select btn-value="查询" v-bind:list="list1">
+        </custom-select>
+        <h2>自定义的下拉框2</h2>
+        <custom-select btn-value="搜索" v-bind:list="list2">
+        </custom-select>
+    </div>
+    <script>
+        //注册组件
+        Vue.component("custom-select",{
+            data:function(){   //这里必须这这样写,写成一个函数,返回一个对象
+                return {
+                    selectShow:false,
+                    val:""   //子向父传数据用
+                };
+            },
+            props:["btnValue","list"],      //父组件,通过自定义属性 向子组件传递数据
+            template:`<section class="warp">
+		<div class="searchIpt clearFix">
+			<div class="clearFix">
+				<input type="text" class="keyWord" :value="val" @click="selectShow=!selectShow" />
+				<input type="button" :value="btnValue">
+				<span></span>
+			</div>
+            <custom-list 
+            v-show="selectShow"
+             :list="list"
+             v-on:receive="changeValueHandle"
+             >
+             
+             </custom-list>
+		</div>
+	</section>`,
+        methods:{
+            changeValueHandle(value){
+                //alert("我被触发了");
+                this.val=value;
+            }
+        }
+        });
+
+        Vue.component("custom-list",{
+            props:["list"],
+            template:`<ul class="list" >
+				<li v-for="item of list" @click="selectValueHandle(item)">{{item}}</li>
+			</ul>`,
+            methods:{
+                selectValueHandle:function(item){
+                    //在子组件中有交互,子组件传数据给父组件
+                    //需要用到自定义事件,父组件用$on 监听 自定义事件,$emit触发父组件所关
+                    //心的自定义事件
+                    //告知 父组件,改变val的值,需要触发
+                    this.$emit("receive",item) ;
+                }
+            }
+        });
+        var data={
+            list1:['北京','上海','广州'],
+            list2:['17-02-17','17-03-17','17-04-17']
+        }
+        new Vue({
+            el:"#app",
+            data:data
+        });
+    </script>
+</body>
+</html>

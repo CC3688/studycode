@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="./vue.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    <div id="app">
+            <h3>父组件中使用了count</h3>
+            <p>{{count}}</p>
+            <custom-component :count="count"  
+            @increment-click="countHandle"></custom-component>   <!--  自定义事件 -->
+    </div>
+    <script>
+        /*  单向数据流
+            :数据从父组件流向(传递)给子组件,只能单向绑定,
+             在子组件内部不应该修改父组件传递过来的数据
+            
+            改变prop 的情况:
+                作为data 中局部数据 的初始值使用
+                作为子组件中的computeted树属性
+
+        */
+
+        Vue.component('custom-component',{
+            props:["count"],
+           /* data: function(){
+                return {
+                    incrementCount:this.count //作为局部这个组件的data的初始值
+                }
+            },
+            */
+            data: function(){
+                return {
+                    incrementCount:this.count //作为局部这个组件的data的初始值
+                }
+            },
+            computed:{
+                incrementCount2:function(){
+                
+                    return this.incrementCount;
+                }
+            },
+            template:`
+                <div>
+                    <h2>我是一个自定义的组件</h2>
+                    <input type="button" value="改变count的值" @click="changeCount" />
+                    {{incrementCount2}}    
+                </div>                
+            `,
+            methods:{
+                changeCount(){
+                    this.incrementCount++;
+                    //通知父组件, 发生了改变
+                    this.$emit("increment-click");
+                }
+            }
+        });
+        new Vue({
+            el:"#app",
+            data:{
+                count:0
+            },
+            methods:{
+                countHandle:function(){
+                    this.count++;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

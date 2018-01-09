@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="./vue.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    <div id="app">
+        <h2>自定义组件</h2>
+        <custom>        <!-- 当写在自定义标签之间的内容 要混全子组件中的模板  
+                            需要在子组件中告知  用slot 标签-->
+            <div slot="one">替换第一个提醒</div> <!--  这里没有就 显示默认的 -->           
+            <div slot="three">替换第3个提醒</div>  
+            <div slot="two">替换第2个提醒</div> 
+            <template slot="two">      <!-- 用template 可以批量的,不用每个元素都加slot -->     
+                <span >替换第2个提醒</span> 
+                <span >替换第2个提醒</span> 
+                <span >替换第2个提醒</span>
+            </template>
+             
+        </custom>
+    </div>
+    <script>
+        //定制
+        /*
+            使用slot分发内容
+            使用一种方式混合父组件的内容与子组件自己的模板,这个过程被称为 "内容分发"
+            在子组件中使用特殊的<slot>元素作为内容的插槽.这样 会使组件的可扩展性更强
+            
+            单个 slot 
+            在子组件模板中有slot标签,被视为备用内容,在父组件不提供内容的情况下使用,如果父组
+            件提供内容,则把整个内容片段插入到slot所在的DOM位置,并替换掉slot标签本身
+            子组件模板中没有slot标签,父组件提供的内容会被抛弃
+
+            具名slot 
+                slot元素可以用一个特殊的属性name来配置如何分发内容.可以使用一个匿名slot
+                处理那此没有对应slot的内容
+            
+            编译作用域
+                父组件模板的内容 在父组件作用域内编译
+                子组件模板的内容 在子组件作用域内编译
+
+        */
+        Vue.component("custom",{
+            template:`
+                <div>
+                    <slot name="one"><p>这是第一个提醒</p></slot>   
+                    <slot name="two"><p>这是第二个提醒</p></slot>
+                    <slot name="three"><p>这是第三个提醒</p></slot>
+                </div>
+            `
+        })
+
+        new Vue({
+            el:"#app"
+
+        })
+    </script>
+</body>
+</html>
